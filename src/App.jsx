@@ -6,26 +6,34 @@ import Balance from "./components/Balance";
 import IncomeExpense from "./components/IncomeExpense";
 
 function App() {
-  const [transactions, setTransactions] = useState([
-    { id: 1, title: "laptop", amount: -6000 },
-    { id: 2, title: "salary", amount: 25000 },
-    { id: 3, title: "trip-ladakh", amount: -7000 },
-    { id: 4, title: "dress", amount: -1500 },
-  ]);
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(()=>{
     fetch('https://mern-back-end-1z43.onrender.com/api/expensesAll').then(res=>res.json()).then(data=>console.log(data))
   })
 
-  const onDeleteTransaction = (id) => {
-    setTransactions(transactions.filter((transaction) => transaction.id !== id));
-  };
 
-  const onAddTransaction = (data) => {
-    const modifiedData = { ...data, id: Math.random() * 1000 };
-    setTransactions([...transactions, modifiedData]);
-    console.log(transactions);
+    // Add a new transaction and store it in the database
+    const onAddTransaction = (data) => {
+      axios
+        .post("https://mern-back-end-1z43.onrender.com/api/expenses", data)
+        .then((res) => {
+          setTransactions([...transactions, res.data]); // Add the newly created transaction to the state
+        })
+        .catch((err) => console.error("Error adding transaction:", err));
+    };
+  
+  const onDeleteTransaction = (id) => {
+    console.log("Deleting transaction with ID:", id);
+    axios
+      .delete(`https://mern-back-end-1z43.onrender.com/api/expensesdeletebyId/:${id}`)
+      .then(() => {
+        console.log("Transaction deleted successfully");
+        setTransactions(transactions.filter((transaction) => transaction.id !== id)); 
+      })
+      .catch((err) => console.error("Error deleting transaction:", err));
   };
+  
 
   return (
     <>
