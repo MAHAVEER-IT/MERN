@@ -12,17 +12,15 @@ function App() {
     fetch('https://mern-back-end-1z43.onrender.com/api/expensesAll').then(res=>res.json()).then(data=>console.log(data))
   })
 
+  const onAddTransaction = (data) => {
+    axios
+      .post("https://mern-back-end-1z43.onrender.com/api/expenses", data)
+      .then((res) => {
+        setTransactions([...transactions, res.data]); // Add the newly created transaction to the state
+      })
+      .catch((err) => console.error("Error adding transaction:", err));
+  };
 
-    // Add a new transaction and store it in the database
-    const onAddTransaction = (data) => {
-      axios
-        .post("https://mern-back-end-1z43.onrender.com/api/expenses", data)
-        .then((res) => {
-          setTransactions([...transactions, res.data]); // Add the newly created transaction to the state
-        })
-        .catch((err) => console.error("Error adding transaction:", err));
-    };
-  
   const onDeleteTransaction = (id) => {
     console.log("Deleting transaction with ID:", id);
     axios
@@ -33,6 +31,10 @@ function App() {
       })
       .catch((err) => console.error("Error deleting transaction:", err));
   };
+
+  useEffect(()=>{
+    fetch('https://mern-back-end-1z43.onrender.com/api/expensesAll').then(res=>res.json()).then(data=>console.log(data))
+  }, []);
   
 
   return (
